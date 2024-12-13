@@ -1,4 +1,3 @@
-// JavaScript code goes here
 let groceryItems = [];
 
 const foodInput = document.getElementById('food-input');
@@ -7,6 +6,7 @@ const priceInput = document.getElementById('price-input');
 const categoryInput = document.getElementById('category-input');
 const addFoodButton = document.getElementById('add-food-button');
 const groceryList = document.getElementById('grocery-list');
+const filterCategorySelect = document.getElementById('category-input');
 
 let totalCount = 0;
 let totalPrice = 0;
@@ -34,8 +34,21 @@ addFoodButton.addEventListener('click', () => {
   const price = priceInput.value.trim();
   const category = categoryInput.value;
 
+  console.log('Food:', food);
+  console.log('Quantity:', quantity);
+  console.log('Price:', price);
+  console.log('Category:', category);
+
   if (food && quantity && price && category) {
-    const itemPrice = parseFloat(price) * parseInt(quantity);
+    const quantityNum = parseInt(quantity);
+    const priceNum = parseFloat(price);
+
+    if (isNaN(quantityNum) || isNaN(priceNum)) {
+      alert('Quantity and Price must be valid numbers.');
+      return;
+    }
+
+    const itemPrice = priceNum * quantityNum;
 
     const listItem = document.createElement('li');
 
@@ -47,20 +60,29 @@ addFoodButton.addEventListener('click', () => {
 
     listItem.appendChild(checkbox);
 
-    const itemText = document.createTextNode(`${food}, ${quantity}, $${price} each`);
+    const itemText = document.createTextNode(`${food}, ${quantity}, $${price} each, Category: ${category}`);
     listItem.appendChild(itemText);
+
+    if (itemPrice > 15) {
+      listItem.classList.add('red-text');
+    } else if (itemPrice > 10) {
+      listItem.classList.add('orange-text');
+    } else if (itemPrice > 5) {
+      listItem.classList.add('yellow-text');
+    }
 
     groceryItems.push({
       food,
       quantity,
       price: itemPrice,
+      category,
       checked: false,
       listItem
     });
 
     groceryList.appendChild(listItem);
 
-    console.log(`Added item: ${food}, ${quantity}, $${price} each`);
+    console.log(`Added item: ${food}, ${quantity}, $${price} each, Category: ${category}`);
 
     totalCount++;
     updateTotalCountDisplay();
@@ -133,4 +155,16 @@ clearBoughtButton.addEventListener('click', () => {
 
   updateTotalCountDisplay();
   updateTotalPriceDisplay();
+});
+
+filterCategorySelect.addEventListener('change', () => {
+  const selectedCategory = filterCategorySelect.value;
+
+  groceryItems.forEach(item => {
+    if (selectedCategory === 'all' || item.category === selectedCategory) {
+      item.listItem.style.display = 'list-item';
+    } else {
+      item.listItem.style.display = 'none';
+    }
+  });
 });
