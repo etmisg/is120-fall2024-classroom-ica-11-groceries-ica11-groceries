@@ -13,6 +13,16 @@ const totalCountDisplay = document.createElement('p');
 totalCountDisplay.textContent = `Items left to buy: ${totalCount}`;
 groceryList.parentNode.appendChild(totalCountDisplay);
 
+const checkAllButton = document.createElement('button');
+checkAllButton.textContent = 'Check All';
+checkAllButton.className = 'btn btn-primary mt-2';
+groceryList.parentNode.appendChild(checkAllButton);
+
+const clearBoughtButton = document.createElement('button');
+clearBoughtButton.textContent = 'Clear Bought Items';
+clearBoughtButton.className = 'btn btn-danger mt-2 ms-2';
+groceryList.parentNode.appendChild(clearBoughtButton);
+
 addFoodButton.addEventListener('click', () => {
   const food = foodInput.value.trim();
   const quantity = quantityInput.value.trim();
@@ -59,3 +69,28 @@ function updateTotalCount() {
   totalCount = uncheckedCount;
   updateTotalCountDisplay();
 }
+
+checkAllButton.addEventListener('click', () => {
+  const checkboxes = groceryList.querySelectorAll('input[type="checkbox"]');
+  const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+
+  checkboxes.forEach(checkbox => {
+    checkbox.checked = !allChecked;
+  });
+
+  totalCount = allChecked ? groceryItems.length : 0;
+  updateTotalCountDisplay();
+
+  checkAllButton.textContent = allChecked ? 'Check All' : 'Uncheck All';
+});
+
+clearBoughtButton.addEventListener('click', () => {
+  const checkboxes = groceryList.querySelectorAll('input[type="checkbox"]:checked');
+  checkboxes.forEach(checkbox => {
+    const listItem = checkbox.parentElement;
+    listItem.remove();
+  });
+
+  totalCount = groceryList.querySelectorAll('li').length;
+  updateTotalCountDisplay();
+});
