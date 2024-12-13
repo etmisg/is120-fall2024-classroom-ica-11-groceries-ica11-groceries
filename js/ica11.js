@@ -17,7 +17,15 @@ addFoodButton.addEventListener('click', () => {
 
   if (food && quantity && price && category) {
     const listItem = document.createElement('li');
-    listItem.textContent = `${food}, ${quantity}, $${price}, ${category}`;
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'form-check-input me-2';
+
+    listItem.appendChild(checkbox);
+
+    const itemText = document.createTextNode(`${food}, ${quantity}, $${price}, ${category}`);
+    listItem.appendChild(itemText);
 
     groceryList.appendChild(listItem);
 
