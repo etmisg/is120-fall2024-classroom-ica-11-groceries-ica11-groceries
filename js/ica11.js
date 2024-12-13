@@ -7,6 +7,8 @@ const categoryInput = document.getElementById('category-input');
 const addFoodButton = document.getElementById('add-food-button');
 const groceryList = document.getElementById('grocery-list');
 const filterCategorySelect = document.getElementById('category-input');
+const budgetMessage = document.createElement('p');
+groceryList.parentNode.appendChild(budgetMessage);
 
 let totalCount = 0;
 let totalPrice = 0;
@@ -34,21 +36,8 @@ addFoodButton.addEventListener('click', () => {
   const price = priceInput.value.trim();
   const category = categoryInput.value;
 
-  console.log('Food:', food);
-  console.log('Quantity:', quantity);
-  console.log('Price:', price);
-  console.log('Category:', category);
-
   if (food && quantity && price && category) {
-    const quantityNum = parseInt(quantity);
-    const priceNum = parseFloat(price);
-
-    if (isNaN(quantityNum) || isNaN(priceNum)) {
-      alert('Quantity and Price must be valid numbers.');
-      return;
-    }
-
-    const itemPrice = priceNum * quantityNum;
+    const itemPrice = parseFloat(price) * parseInt(quantity);
 
     const listItem = document.createElement('li');
 
@@ -63,14 +52,6 @@ addFoodButton.addEventListener('click', () => {
     const itemText = document.createTextNode(`${food}, ${quantity}, $${price} each, Category: ${category}`);
     listItem.appendChild(itemText);
 
-    if (itemPrice > 15) {
-      listItem.classList.add('red-text');
-    } else if (itemPrice > 10) {
-      listItem.classList.add('orange-text');
-    } else if (itemPrice > 5) {
-      listItem.classList.add('yellow-text');
-    }
-
     groceryItems.push({
       food,
       quantity,
@@ -82,13 +63,15 @@ addFoodButton.addEventListener('click', () => {
 
     groceryList.appendChild(listItem);
 
-    console.log(`Added item: ${food}, ${quantity}, $${price} each, Category: ${category}`);
-
     totalCount++;
     updateTotalCountDisplay();
 
     totalPrice += itemPrice;
     updateTotalPriceDisplay();
+
+    applyPriceColor(listItem, itemPrice);
+
+    checkBudget();
 
     foodInput.value = '';
     quantityInput.value = '';
@@ -98,6 +81,18 @@ addFoodButton.addEventListener('click', () => {
     alert('Please fill in all fields to add an item.');
   }
 });
+
+function applyPriceColor(listItem, itemPrice) {
+  if (itemPrice > 15) {
+    listItem.style.color = 'red';
+  } else if (itemPrice > 10) {
+    listItem.style.color = 'orange';
+  } else if (itemPrice > 5) {
+    listItem.style.color = 'yellow';
+  } else {
+    listItem.style.color = 'black';
+  }
+}
 
 function updateTotalCountAndPrice() {
   let newTotalCount = 0;
@@ -115,6 +110,14 @@ function updateTotalCountAndPrice() {
 
   updateTotalCountDisplay();
   updateTotalPriceDisplay();
+
+  groceryItems.forEach(item => {
+    if (!item.checked) {
+      applyPriceColor(item.listItem, item.price);
+    }
+  });
+
+  checkBudget();
 }
 
 function updateTotalCountDisplay() {
@@ -123,6 +126,15 @@ function updateTotalCountDisplay() {
 
 function updateTotalPriceDisplay() {
   totalPriceDisplay.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
+}
+
+function checkBudget() {
+  if (totalPrice > 100) {
+    budgetMessage.textContent = "You're spending too much money!";
+    budgetMessage.style.color = 'red';
+  } else {
+    budgetMessage.textContent = '';
+  }
 }
 
 checkAllButton.addEventListener('click', () => {
@@ -140,6 +152,14 @@ checkAllButton.addEventListener('click', () => {
   updateTotalPriceDisplay();
 
   checkAllButton.textContent = allChecked ? 'Check All' : 'Uncheck All';
+
+  groceryItems.forEach(item => {
+    if (!item.checked) {
+      applyPriceColor(item.listItem, item.price);
+    }
+  });
+
+  checkBudget();
 });
 
 clearBoughtButton.addEventListener('click', () => {
@@ -155,6 +175,14 @@ clearBoughtButton.addEventListener('click', () => {
 
   updateTotalCountDisplay();
   updateTotalPriceDisplay();
+
+  groceryItems.forEach(item => {
+    if (!item.checked) {
+      applyPriceColor(item.listItem, item.price);
+    }
+  });
+
+  checkBudget();
 });
 
 filterCategorySelect.addEventListener('change', () => {
