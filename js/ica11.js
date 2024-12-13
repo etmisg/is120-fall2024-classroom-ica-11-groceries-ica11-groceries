@@ -8,8 +8,12 @@ const categoryInput = document.getElementById('category-input');
 const addFoodButton = document.getElementById('add-food-button');
 const groceryList = document.getElementById('grocery-list');
 
-addFoodButton.addEventListener('click', () => {
+let totalCount = 0;
+const totalCountDisplay = document.createElement('p');
+totalCountDisplay.textContent = `Items left to buy: ${totalCount}`;
+groceryList.parentNode.appendChild(totalCountDisplay);
 
+addFoodButton.addEventListener('click', () => {
   const food = foodInput.value.trim();
   const quantity = quantityInput.value.trim();
   const price = priceInput.value.trim();
@@ -22,6 +26,8 @@ addFoodButton.addEventListener('click', () => {
     checkbox.type = 'checkbox';
     checkbox.className = 'form-check-input me-2';
 
+    checkbox.addEventListener('change', updateTotalCount);
+
     listItem.appendChild(checkbox);
 
     const itemText = document.createTextNode(`${food}, ${quantity}, $${price}, ${category}`);
@@ -31,6 +37,9 @@ addFoodButton.addEventListener('click', () => {
 
     console.log(`Added item: ${food}, ${quantity}, $${price}, ${category}`);
 
+    totalCount++;
+    updateTotalCountDisplay();
+
     foodInput.value = '';
     quantityInput.value = '';
     priceInput.value = '';
@@ -39,3 +48,14 @@ addFoodButton.addEventListener('click', () => {
     alert('Please fill in all fields to add an item.');
   }
 });
+
+function updateTotalCountDisplay() {
+  totalCountDisplay.textContent = `Items left to buy: ${totalCount}`;
+}
+
+function updateTotalCount() {
+  const checkboxes = groceryList.querySelectorAll('input[type="checkbox"]');
+  const uncheckedCount = Array.from(checkboxes).filter(checkbox => !checkbox.checked).length;
+  totalCount = uncheckedCount;
+  updateTotalCountDisplay();
+}
