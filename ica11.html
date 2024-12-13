@@ -38,14 +38,21 @@
   </header>
 
   <main>
-    <section id="item-add-container">
-      <!-- Grocery list item inputs go here -->
+    <section id="item-add-container" class="container my-4">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <input id="food-input" type="text" class="form-control" placeholder="Enter food item">
+          </div>
+          <div class="col-md-3">
+            <button id="add-food-button" class="btn btn-primary w-100">Add Item</button>
+          </div>
+        </div>
+    </section>
+      
     </section>
 
     <section id="list-container">
-      <!-- UL for your grocery list -->
       <ul id="grocery-list"></ul>
-      <!-- Quantity output, buy all and clear all bought buttons, and total price text go here -->
     </section>
   </main>
 
